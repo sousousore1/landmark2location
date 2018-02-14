@@ -9,19 +9,29 @@ module Landmark2location
       @landmark = landmark
     end
 
-    def get_postal_code
+    def ok?
+      status == 'OK'
+    end
+
+    def get_postal_codes
+      return [] unless ok?
+      postal_codes = []
       results.each do |result|
         result['address_components'].each do |address_component|
           next unless address_component['types'].include? 'postal_code'
-          return address_component['long_name']
+          postal_codes << address_component['long_name']
         end
       end
+      postal_codes
     end
 
-    def get_formatted_address
+    def get_formatted_addresses
+      return [] unless ok?
+      formatted_addresses = []
       results.each do |result|
-        return result['formatted_address']
+        formatted_addresses << result['formatted_address']
       end
+      formatted_addresses
     end
 
     private
@@ -48,10 +58,6 @@ module Landmark2location
 
     def status
       @status ||= json['status']
-    end
-
-    def ok?
-      status == 'OK'
     end
   end
 end
